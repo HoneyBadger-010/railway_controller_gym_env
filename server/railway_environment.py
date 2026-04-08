@@ -432,7 +432,6 @@ class RailwayControllerEnvironment(MCPEnvironment):
             # Cross connections
             TrackSegment(segment_id="J1-J2", length=2, next_segments=["J2-CORE"]),
             TrackSegment(segment_id="C-J3", length=2, next_segments=["J3-CORE"]),
-            TrackSegment(segment_id="C-J4", length=2, next_segments=["J4-CORE"]),
             # Opposite directions
             TrackSegment(segment_id="B-J1", length=2, next_segments=["J1-CORE"], station_name="Station B"),
             TrackSegment(segment_id="F-J4", length=2, next_segments=["J4-CORE"], station_name="Station F"),
@@ -858,11 +857,12 @@ class RailwayControllerEnvironment(MCPEnvironment):
         train_delays = []
         
         for tid, train in self._trains.items():
-            # Calculate current delay (if still moving)
-            current_delay = train.delay
-            if train.status not in [TrainStatus.ARRIVED, TrainStatus.DELAYED]:
-                if self._step_count > train.scheduled_arrival:
-                    current_delay = self._step_count - train.scheduled_arrival
+            # Calculate current delay based on schedule vs current step
+            current_delay = 0
+            if train.status in [TrainStatus.ARRIVED, TrainStatus.DELAYED]:
+                current_delay = train.delay
+            elif self._step_count > train.scheduled_arrival:
+                current_delay = self._step_count - train.scheduled_arrival
             
             # Calculate time remaining
             time_remaining = max(0, train.scheduled_arrival - self._step_count)

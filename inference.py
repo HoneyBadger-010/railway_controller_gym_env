@@ -166,7 +166,7 @@ async def run_task(env: RailwayControllerEnv, client: OpenAI, task_name: str) ->
     success = False
     
     # Get task-specific max steps
-    task_max_steps = {"basic_control": 30, "junction_management": 50, "rush_hour": 80}.get(task_name, 50)
+    task_max_steps = {"basic_control": 30, "junction_management": 50, "express_priority": 40, "rush_hour": 80}.get(task_name, 50)
     
     log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
     
