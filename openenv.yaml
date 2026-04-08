@@ -1,0 +1,41 @@
+spec_version: 1
+name: railway_controller
+type: space
+runtime: fastapi
+app: server.app:app
+port: 8000
+
+description: >
+  Railway Traffic Controller - A real-world simulation of train dispatching
+  where an AI agent manages signals, routing, and priorities to keep trains
+  safe and on time across increasingly complex railway networks.
+
+tasks:
+  - name: basic_control
+    difficulty: easy
+    description: "2 trains, one shared junction. Prevent collision."
+    max_steps: 30
+  - name: junction_management
+    difficulty: medium
+    description: "4 trains (1 express) crossing two junctions. Optimize flow."
+    max_steps: 50
+  - name: rush_hour
+    difficulty: hard
+    description: "6 trains (2 high-speed, 2 express) with weather and delays."
+    max_steps: 80
+  - name: express_priority
+    difficulty: medium-hard
+    description: "5 trains (2 high-speed, 1 express) through 3-junction chain with tight schedules."
+    max_steps: 40
+
+graders:
+  module: railway_controller.graders
+  mapping:
+    basic_control: BasicControlGrader
+    junction_management: JunctionManagementGrader
+    express_priority: ExpressPriorityGrader
+    rush_hour: RushHourGrader
+
+inference:
+  script: railway_controller/inference.py
+  model: Qwen/Qwen2.5-72B-Instruct

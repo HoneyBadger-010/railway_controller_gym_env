@@ -1,0 +1,23 @@
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.eggs
+*.egg
+.git
+.gitignore
+.venv
+venv
+.env
+outputs/
+logs/
+evals/
+.pytest_cache
+.coverage
+htmlcov/
+*.md
+!README.md
+deploy_to_hf.py
+hackathon review
+CONTEXT.md
+test_*.py
