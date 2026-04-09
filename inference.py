@@ -184,7 +184,7 @@ async def run_task(env: RailwayControllerEnv, client: OpenAI, task_name: str) ->
                 break
             
             # Get current status
-            status = await env.call_tool_async("get_status")
+            status = await env.call_tool("get_status")
             
             # Build user prompt with context
             user_prompt = build_user_prompt(status, step, last_tool_result)
@@ -210,11 +210,15 @@ async def run_task(env: RailwayControllerEnv, client: OpenAI, task_name: str) ->
             else:
                 action_str = f"{tool_name}({tool_args})"
                 try:
-                    result = await env.step_tool(tool_name, **tool_args)
-                    reward = result.reward or 0.0
-                    done = result.done
+                    result = await env.call_tool(tool_name, **tool_args)
+                    # call_tool returns the tool result directly
+                    reward = 0.0
+                    done = False
+                    if isinstance(result, dict):
+                        reward = result.get("reward", 0.0)
+                        done = result.get("done", False)
+                    last_tool_result = result if isinstance(result, dict) else {"result": str(result)}
                     error = None
-                    last_tool_result = result.metadata if hasattr(result, 'metadata') else {}
                 except Exception as e:
                     reward = 0.0
                     done = False
@@ -231,52 +235,101 @@ async def run_task(env: RailwayControllerEnv, client: OpenAI, task_name: str) ->
         
         # Use the proper grader for final scoring (not naive reward average)
         grader = get_grader(task_name)
-        final_status = await env.call_tool_async("get_status")
-        task_result = grader.grade(final_status)
+        final_status = await env.call_tool("get_status")
+        if isinstance(final_status, dict):
+            task_result = grader.grade(final_status)
+        else:
+            task_result = grader.grade({})
         score = task_result.score
         success = score >= SUCCESS_SCORE_THRESHOLD
         
         print(f"[GRADER] {task_result.message}", flush=True)
         
+    except Exception as e:
+        print(f"[ERROR] Task {task_name} failed: {e}", flush=True)
     finally:
-        try:
-            await env.close()
-        except Exception as e:
-            print(f"[DEBUG] env.close() error: {e}", flush=True)
-        
         log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
     
     return success, steps_taken, score
+
+
+async def create_env(image_name: str) -> RailwayControllerEnv:
+    """Create environment with fallback strategies.
+    
+    Strategy order:
+    1. SERVER_URL env var (explicit server)
+    2. from_docker_image (standard evaluator flow)
+    3. Connect to localhost:8000 (evaluator may start container separately)
+    4. UVProvider fallback (run server as subprocess via uv)
+    """
+    # Strategy 1: Explicit server URL
+    server_url = os.getenv("SERVER_URL")
+    if server_url:
+        print(f"[ENV] Connecting to SERVER_URL: {server_url}", flush=True)
+        env = RailwayControllerEnv(base_url=server_url)
+        return env
+    
+    # Strategy 2: Docker image
+    try:
+        print(f"[ENV] Trying from_docker_image({image_name})...", flush=True)
+        env = await RailwayControllerEnv.from_docker_image(image_name)
+        print("[ENV] Docker container started successfully", flush=True)
+        return env
+    except Exception as e:
+        print(f"[ENV] Docker failed: {e}", flush=True)
+    
+    # Strategy 3: Try connecting to localhost:8000 (evaluator may have started container)
+    try:
+        import requests
+        health = requests.get("http://localhost:8000/health", timeout=3)
+        if health.status_code == 200:
+            print("[ENV] Found running server on localhost:8000", flush=True)
+            env = RailwayControllerEnv(base_url="http://localhost:8000")
+            return env
+    except Exception:
+        pass
+    
+    # Strategy 4: UVProvider fallback
+    try:
+        print("[ENV] Trying UVProvider fallback...", flush=True)
+        env = await RailwayControllerEnv.from_env(
+            "atulgupta-dev/railway-controller",
+            use_docker=False,
+        )
+        print("[ENV] UVProvider started successfully", flush=True)
+        return env
+    except Exception as e:
+        print(f"[ENV] UVProvider failed: {e}", flush=True)
+    
+    raise RuntimeError("Could not connect to environment server via any method")
 
 
 async def main() -> None:
     """Main entry point."""
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
     
-    # Run all three tasks
     tasks = ["basic_control", "junction_management", "express_priority", "rush_hour"]
     total_score = 0.0
     total_success = 0
+    
+    # Create a single environment connection (reuse across tasks)
+    env = await create_env(IMAGE_NAME)
     
     for task_name in tasks:
         print(f"\n{'='*50}", flush=True)
         print(f"Running task: {task_name}", flush=True)
         print(f"{'='*50}", flush=True)
         
-        # Create environment for this task
-        # Use SERVER_URL if provided (for local testing when docker needs sudo)
-        # Otherwise use from_docker_image (for hackathon evaluators)
-        server_url = os.getenv("SERVER_URL")
-        if server_url:
-            env = RailwayControllerEnv(base_url=server_url)
-            await env.reset(task_name=task_name)
-        else:
-            env = await RailwayControllerEnv.from_docker_image(IMAGE_NAME)
-        
         success, steps, score = await run_task(env, client, task_name)
         total_score += score
         if success:
             total_success += 1
+    
+    # Clean up
+    try:
+        await env.close()
+    except Exception:
+        pass
     
     print(f"\n{'='*50}", flush=True)
     print(f"FINAL RESULTS", flush=True)
