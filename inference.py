@@ -83,9 +83,15 @@ def log_start(task: str, env: str, model: str) -> None:
     print(f"[START] task={task} env={env} model={model}", flush=True)
 
 
+def _clamp_score(v: float) -> float:
+    """Clamp score to strictly (0, 1) — evaluator rejects 0.0 and 1.0."""
+    return max(0.001, min(0.999, v))
+
+
 def log_step(step: int, action: str, reward: float, done: bool, error: Optional[str]) -> None:
     error_val = error if error else "null"
     done_val = str(done).lower()
+    reward = _clamp_score(reward)
     print(
         f"[STEP] step={step} action={action} reward={reward:.2f} done={done_val} error={error_val}",
         flush=True,
@@ -93,6 +99,8 @@ def log_step(step: int, action: str, reward: float, done: bool, error: Optional[
 
 
 def log_end(success: bool, steps: int, score: float, rewards: List[float]) -> None:
+    score = _clamp_score(score)
+    rewards = [_clamp_score(r) for r in rewards]
     rewards_str = ",".join(f"{r:.2f}" for r in rewards)
     print(f"[END] success={str(success).lower()} steps={steps} score={score:.3f} rewards={rewards_str}", flush=True)
 
@@ -162,7 +170,7 @@ async def run_task(env: RailwayControllerEnv, client: OpenAI, task_name: str) ->
     """Run a single task and return results."""
     rewards: List[float] = []
     steps_taken = 0
-    score = 0.0
+    score = 0.001
     success = False
     
     # Get task-specific max steps
