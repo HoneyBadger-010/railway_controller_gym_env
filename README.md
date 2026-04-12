@@ -24,14 +24,14 @@ license: mit
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
-[![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Space-yellow?style=for-the-badge)](https://huggingface.co/spaces/atulgupta-dev/railway-controller)
+[![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Space-yellow?style=for-the-badge)](https://huggingface.co/spaces/omkargadekar-dev/railway-controller)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 ---
 
 *A high-fidelity simulation of real-world railway traffic control — where an AI agent manages train movements, signals, and junction routing to prevent collisions and minimize delays across increasingly complex rail networks.*
 
-[🚀 Live Demo](https://atulgupta-dev-railway-controller.hf.space/) · [📖 API Docs](https://atulgupta-dev-railway-controller.hf.space/) · [🐛 Report Bug](https://github.com/Atul1242/railway_controller/issues)
+[🚀 Live Demo](https://omkargadekar-dev-railway-controller.hf.space/) · [📖 API Docs](https://omkargadekar-dev-railway-controller.hf.space/) · [🐛 Report Bug](https://github.com/HoneyBadger-010/railway_controller_gym_env/issues)
 
 </div>
 
@@ -367,7 +367,7 @@ Test coverage includes:
 
 *If trains could talk, they'd thank their traffic controller.*
 
-[![GitHub](https://img.shields.io/badge/GitHub-Atul1242-181717?style=flat-square&logo=github)](https://github.com/Atul1242/railway_controller)
-[![HuggingFace](https://img.shields.io/badge/🤗_Live_Demo-HuggingFace-yellow?style=flat-square)](https://huggingface.co/spaces/atulgupta-dev/railway-controller)
+[![GitHub](https://img.shields.io/badge/GitHub-HoneyBadger--010-181717?style=flat-square&logo=github)](https://github.com/HoneyBadger-010/railway_controller_gym_env)
+[![HuggingFace](https://img.shields.io/badge/🤗_Live_Demo-HuggingFace-yellow?style=flat-square)](https://huggingface.co/spaces/omkargadekar-dev/railway-controller)
 
 </div>
