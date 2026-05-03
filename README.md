@@ -1,8 +1,5 @@
 ---
 title: Railway Traffic Controller Gym Environment
-emoji: 🚂
-colorFrom: blue
-colorTo: green
 sdk: docker
 app_port: 8000
 pinned: false
@@ -17,7 +14,7 @@ license: mit
 
 <div align="center">
 
-# 🚂 Railway Traffic Controller Gym Environment
+# Railway Traffic Controller Gym Environment
 
 **An advanced, OpenEnv-compatible reinforcement learning simulation for AI-driven railway traffic management, collision avoidance, and dynamic dispatching.**
 
@@ -25,18 +22,16 @@ license: mit
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
-[![Live Demo](https://img.shields.io/badge/🤗_HuggingFace-Live_Demo-yellow?style=for-the-badge)](https://huggingface.co/spaces/omkargadekar-dev/railway-controller)
+[![Live Demo](https://img.shields.io/badge/HuggingFace-Live_Demo-yellow?style=for-the-badge)](https://huggingface.co/spaces/omkargadekar-dev/railway-controller)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-[Live Demo](https://omkargadekar-dev-railway-controller.hf.space/) •
-[API Documentation](https://omkargadekar-dev-railway-controller.hf.space/docs) •
-[Report an Issue](https://github.com/HoneyBadger-010/railway_controller_gym_env/issues)
+[Live Demo](https://omkargadekar-dev-railway-controller.hf.space/) | [API Documentation](https://omkargadekar-dev-railway-controller.hf.space/docs) | [Report an Issue](https://github.com/HoneyBadger-010/railway_controller_gym_env/issues)
 
 </div>
 
 ---
 
-## 📖 Overview
+## Overview
 
 The **Railway Traffic Controller** is a high-fidelity simulation environment designed for training and evaluating reinforcement learning (RL) agents in complex infrastructure management. It models the critical responsibilities of human railway traffic controllers—making split-second decisions to manage train movements, signals, and routing across intricate rail networks.
 
@@ -44,7 +39,7 @@ Our objective is to provide a robust benchmark for AI agents, enabling them to s
 
 ---
 
-## 🎯 Problem Statement & Applications
+## Problem Statement & Applications
 
 Railway networks require precise coordination. A single miscalculated signal can cascade into catastrophic collisions or multi-hour gridlocks. This environment serves as a testbed for solving these challenges autonomously.
 
@@ -56,35 +51,35 @@ Railway networks require precise coordination. A single miscalculated signal can
 
 ---
 
-## ✨ Core Features
+## Core Features
 
-### 🛡️ Authentic Block Signaling Safety System
+### Authentic Block Signaling Safety System
 The environment implements a realistic block signaling architecture, enforcing the fundamental safety mechanism of modern rail networks:
-- **🟢 GREEN**: Proceed (next segment is clear).
-- **🟡 YELLOW**: Caution (mandatory 1-step wait, automatically clears).
-- **🔴 RED**: Stop (entry to the next segment is strictly prohibited).
+- **GREEN**: Proceed (next segment is clear).
+- **YELLOW**: Caution (mandatory 1-step wait, automatically clears).
+- **RED**: Stop (entry to the next segment is strictly prohibited).
 - *Strict Constraints:* Only one train is permitted per track block. Signal violations or concurrent block occupation result in critical failure (collision).
 
-### 🚄 Dynamic Priority Dispatching
+### Dynamic Priority Dispatching
 Trains are governed by a hierarchical priority system, simulating real-world scheduling complexity:
 
-| Priority Level | Classification | Identifier | Operational Behavior |
+| Priority Level | Classification | Indicator | Operational Behavior |
 |:---:|---|:---:|---|
-| **3** | High-Speed | 🔴 | Absolute right-of-way; strict schedule adherence required. |
-| **2** | Express | 🟠 | Standard priority; yields only to High-Speed traffic. |
-| **1** | Regular | 🟢 | Standard scheduling; yields to all higher-priority traffic. |
+| **3** | High-Speed | [H] | Absolute right-of-way; strict schedule adherence required. |
+| **2** | Express | [E] | Standard priority; yields only to High-Speed traffic. |
+| **1** | Regular | [R] | Standard scheduling; yields to all higher-priority traffic. |
 
-*Dynamic Boosting:* Delayed trains receive priority boosts (`effective_priority = base_priority + min(delay × 0.1, 0.5)`) to facilitate schedule recovery.
+*Dynamic Boosting:* Delayed trains receive priority boosts (`effective_priority = base_priority + min(delay * 0.1, 0.5)`) to facilitate schedule recovery.
 
-### 🌧️ Stochastic Weather & Disruptions
+### Stochastic Weather & Disruptions
 To model real-world unpredictability, the environment introduces stochastic weather delays during peak scenarios, forcing the agent to dynamically adapt its routing and signal management strategies.
 
-### 🧠 Integrated AI Control Tooling
+### Integrated AI Control Tooling
 The environment exposes a comprehensive Model Context Protocol (MCP) suite, including a `get_control_suggestions()` heuristic that provides AI agents with collision risk assessments and schedule recovery hints.
 
 ---
 
-## 🏁 Evaluation Tasks
+## Evaluation Tasks
 
 The environment provides progressive difficulty benchmarks to evaluate agent capability:
 
@@ -97,7 +92,7 @@ The environment provides progressive difficulty benchmarks to evaluate agent cap
 
 ---
 
-## 🛠️ MCP Tool Suite
+## MCP Tool Suite
 
 Agents interact with the simulation via a standardized set of tools:
 
@@ -118,19 +113,19 @@ Agents interact with the simulation via a standardized set of tools:
 
 ---
 
-## 📊 Evaluation & Reward Function
+## Evaluation & Reward Function
 
 Agents are evaluated holistically across four dimensions: **Arrivals (Punctuality)**, **Safety (Collision Avoidance)**, **Priority Adherence**, and **Network Efficiency**. 
 
 **Reward Design:**
-- **On-time arrival:** `+0.2 × priority` (Granted upon successful destination reach).
-- **Delay penalty:** `-0.05 × delay_steps` (Capped at maximum limit).
+- **On-time arrival:** `+0.2 * priority` (Granted upon successful destination reach).
+- **Delay penalty:** `-0.05 * delay_steps` (Capped at maximum limit).
 - **Waiting penalty:** `-0.01` (Applied per step, per stationary train).
 - **Collision:** `-0.5` (Immediate termination with penalty).
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Option 1: Docker (Recommended)
 ```bash
@@ -144,7 +139,7 @@ docker run -p 8000:8000 railway-controller:latest
 curl http://localhost:8000/health
 ```
 
-### Option 2: Local Setup (`uv`)
+### Option 2: Local Setup (uv)
 ```bash
 # Sync dependencies via uv
 uv sync
@@ -174,7 +169,7 @@ async with RailwayControllerEnv(base_url="http://localhost:8000") as env:
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 graph TB
@@ -198,13 +193,13 @@ graph TB
 
 ---
 
-## 📋 OpenEnv Compliance Verification
+## OpenEnv Compliance Verification
 
-- ✅ **Environment Variables**: Native support for `API_BASE_URL`, `MODEL_NAME`, `HF_TOKEN`, `LOCAL_IMAGE_NAME`.
-- ✅ **Structured Logging**: Fully compliant `[START]` → `[STEP]` → `[END]` telemetry.
-- ✅ **API Standard**: Built on `openai.OpenAI` for seamless LLM integration.
-- ✅ **Deployment**: Unified Dockerfile for local execution and HuggingFace Spaces.
-- ✅ **Validation**: Passes `openenv validate` (`[OK] Ready for multi-mode deployment`).
+- **Environment Variables**: Native support for `API_BASE_URL`, `MODEL_NAME`, `HF_TOKEN`, `LOCAL_IMAGE_NAME`.
+- **Structured Logging**: Fully compliant `[START]` -> `[STEP]` -> `[END]` telemetry.
+- **API Standard**: Built on `openai.OpenAI` for seamless LLM integration.
+- **Deployment**: Unified Dockerfile for local execution and HuggingFace Spaces.
+- **Validation**: Passes `openenv validate` (`[OK] Ready for multi-mode deployment`).
 
 ---
 
@@ -213,7 +208,7 @@ graph TB
 ### Built for the Future of Autonomous Rail
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&logo=github)](https://github.com/HoneyBadger-010/railway_controller_gym_env)
-[![HuggingFace](https://img.shields.io/badge/🤗_Live_Demo-HuggingFace-yellow?style=flat-square)](https://huggingface.co/spaces/omkargadekar-dev/railway-controller)
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-Live_Demo-yellow?style=flat-square)](https://huggingface.co/spaces/omkargadekar-dev/railway-controller)
 
 *Licensed under the [MIT License](LICENSE).*
 
